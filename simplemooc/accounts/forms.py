@@ -9,7 +9,6 @@ from .models import PasswordReset
 
 User = get_user_model()
 
-
 class PasswordResetForm(forms.Form):
 
     email = forms.EmailField(label='E-mail')
@@ -18,9 +17,7 @@ class PasswordResetForm(forms.Form):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
             return email
-        raise forms.ValidationError(
-            'Nenhum usuário encontrado com este e-mail'
-        )
+        raise forms.ValidationError('Nenhum usuário encontrado com este e-mail')
 
     def save(self):
         user = User.objects.get(email=self.cleaned_data['email'])
@@ -30,17 +27,14 @@ class PasswordResetForm(forms.Form):
         template_name = 'accounts/password_reset_mail.html'
         subject = 'Criar nova senha no Simple MOOC'
         context = {
-            'reset': reset,
+            'reset': reset
         }
         send_mail_template(subject, template_name, context, [user.email])
-
 
 class RegisterForm(forms.ModelForm):
 
     password1 = forms.CharField(label='Senha', widget=forms.PasswordInput)
-    password2 = forms.CharField(
-        label='Confirmação de Senha', widget=forms.PasswordInput
-    )
+    password2 = forms.CharField(label='Confirmação de Senha', widget=forms.PasswordInput)
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -59,6 +53,12 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email']
+
+#    def clean_email(self):
+#        email = self.cleaned_data['email']
+#        if User.objects.filter(email=email).exists():
+#            raise forms.ValidationError('Já existe usuário com este E-mail')
+#        return email
 
 
 class EditAccountForm(forms.ModelForm):

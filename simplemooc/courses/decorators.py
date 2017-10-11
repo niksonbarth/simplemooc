@@ -15,7 +15,7 @@ def enrollment_required(view_func):
                 )
             except Enrollment.DoesNotExist:
                 message = 'Desculpe, mas você não tem permissão para acessar esta página'
-            else:
+            else: # <--- bem loco esse else do except
                 if enrollment.is_approved():
                     has_permission = True
                 else:

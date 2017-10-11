@@ -6,16 +6,27 @@ from django.conf import settings
 
 from simplemooc.courses.models import Course
 
-
 class ContactCourseTestCase(TestCase):
 
+    #executa a cada teste
     def setUp(self):
         self.course = Course.objects.create(name='Django', slug='django')
 
+    #executa a cada teste
     def tearDown(self):
         self.course.delete()
 
-    def test_contact_form_error(self):
+    #executa uma ves por classe
+    @classmethod
+    def setUpClass(cls):
+        pass
+
+    #executa uma ves por classe
+    @classmethod
+    def tearDownClass(cls):
+        pass
+
+    def test_contact_from_error(self):
         data = {'name': 'Fulano de Tal', 'email': '', 'message': ''}
         client = Client()
         path = reverse('courses:details', args=[self.course.slug])
@@ -23,8 +34,8 @@ class ContactCourseTestCase(TestCase):
         self.assertFormError(response, 'form', 'email', 'Este campo é obrigatório.')
         self.assertFormError(response, 'form', 'message', 'Este campo é obrigatório.')
 
-    def test_contact_form_success(self):
-        data = {'name': 'Fulano de Tal', 'email': 'admin@admin.com', 'message': 'Oi'}
+    def test_contact_from_success(self):
+        data = {'name': 'Fulano de Tal', 'email': 'admin@admin.com', 'message': 'oi'}
         client = Client()
         path = reverse('courses:details', args=[self.course.slug])
         response = client.post(path, data)
