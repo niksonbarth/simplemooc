@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'simplemooc.core',
     'simplemooc.accounts',
     'simplemooc.courses',
+    'simplemooc.forum',
+    'taggit',
 ]
 
 MIDDLEWARE = [
@@ -166,4 +168,3 @@ try:
     from simplemooc.local_settings import *
 except ImportError:
     pass
-
