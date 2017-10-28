@@ -24,6 +24,7 @@ class Thread(models.Model):
 
 class Reply(models.Model):
 
+    thread = models.ForeignKey(Thread, verbose_name='Tópico', related_name='replies')
     reply = models.TextField('Respostas')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Autor', related_name='replies')
     correct = models.BooleanField('Correta?', blank=True, default=False)
