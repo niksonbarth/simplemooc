@@ -68,7 +68,7 @@
                 <a class="fright" href="#add_comment">Responder</a></h4>
                 {% for reply in object.replies.all %}
                 <hr />
-                <p>
+                {% filter linebreaks %}
                     <strong>{{ reply.author }}</strong> disse à {{ reply.created|timesince }} atrás:
                     <br />
                     {{ reply.reply|linebreaksbr }}
@@ -84,7 +84,7 @@
                     <span class="fright label-success">resposta indicada pelo autor</span>
                     <br />
                     {% endif %}
-                </p>
+                {% endfilter %}
                 {% endfor %}
                 <hr />
                 <form method="post" class="pure-form pure-form-stacked" id="add_comment">
