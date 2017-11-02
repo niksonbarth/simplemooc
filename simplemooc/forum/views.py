@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, View, ListView,DetailView
-from django.contrib import messages
+import json
 
-from .models import Thread
+from django.contrib import messages
+from django.shortcuts import redirect, render, get_object_or_404
+from django.views.generic import DetailView, ListView, TemplateView, View
+from django.http import HttpResponse
+
 from .forms import ReplyForm
+from .models import Thread, Reply
 
 #class ForumView(TemplateView):
 #    template_name = 'forum/index.html'
@@ -40,6 +43,13 @@ class ThreadView(DetailView):
     model = Thread
     template_name = 'forum/thread.html'
 
+    def get(self, request, *args, **kwargs):
+        response = super(ThreadView, self).get(request, *args, **kwargs)
+        if not self.request.user.is_authenticated() or (self.object.author != self.request.user):
+            self.object.views = self.object.views +1
+            self.object.save()
+        return response
+
     def get_context_data(self, **kwargs):
         context = super(ThreadView, self).get_context_data(**kwargs)
         context['tags'] = Thread.tags.all()
@@ -64,5 +74,24 @@ class ThreadView(DetailView):
             
         return self.render_to_response(context)
 
+class ReplyCorrectView(View):
+
+    correct = True
+
+    def get(self, request, pk):
+        reply = get_object_or_404(Reply, pk=pk, thread__author=request.user)
+        reply.correct = self.correct
+        reply.save()
+        message = 'Resposta atualizada com sucesso'
+        if request.is_ajax():
+            data = {'success': True, 'message': message}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.success(request, message)
+            return redirect(reply.thread.get_absolute_url())
+
+
 index = ForumView.as_view()
 thread = ThreadView.as_view()
+reply_correct = ReplyCorrectView.as_view()
+reply_incorrect = ReplyCorrectView.as_view(correct=False)
